@@ -137,7 +137,7 @@ Este es el valor con el que se crean las entidades de Atributo, significa que no
 
 **Cancelar Orden de Restock**
 
-`PUT /cancelar/{idOrdenRestock}`
+`PUT /cancelarOrden/{idOrdenRestock}`
 
 Body
 ```json
@@ -158,7 +158,7 @@ Response `200 OK`
 
 **Finalizar Orden de Restock**
 
-`PUT /finalizar/{idOrdenRestock}`
+`PUT /finalizarOrden/{idOrdenRestock}`
 
 Body
 ```json
