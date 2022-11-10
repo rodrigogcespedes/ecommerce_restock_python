@@ -2,6 +2,8 @@
 
 ### Casos de uso
 
+![alt text](//www.plantuml.com/plantuml/png/ROwn2i8m48RtFCMHoGuTr4uTfB7WLWJ11pZQ8C7B1PBBujDR6kjWNKBuxh_x_Yu9HicUL7jFDhPGroVOpTzzzKiE6tBSaAPI-cQJXF490t96qe1fFQXxvD4IHhZ6oJ9yaYLI3FhY6Ccz_cUAKvlpq8E9uiPCuJjf5e4WXKU1PlAErVAMWcipaoLudDT3fJhBK_Rq1W00)
+
 #### CU Restock Automatico
 **Descripcion:** Cuando el stock de un articulo disminuye, se genera una Orden de Compra automáticamente si es necesario.
 
