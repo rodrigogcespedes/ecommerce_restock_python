@@ -117,13 +117,17 @@ Se retorna un mensaje indicando que el id ingresado no corresponde a una Orden d
 ### Interfaz REST
 
 **Cancelar Orden de Restock**
+
 `PUT /cancelar/{idOrdenRestock}`
+
 Body
 ```json
 {}
 ```
 *Response*
+
 `200 OK`
+
 ```json
 {
     "id" : "string",
