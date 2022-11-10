@@ -2,7 +2,7 @@
 
 ### Casos de uso
 
-#### CU: Restock Automatico
+#### CU Restock Automatico
 **Descripcion:** Cuando el stock de un articulo disminuye, se genera una Orden de Compra automáticamente si es necesario.
 
 **Precondicion:** Debe existir un Articulo en la base de datos del microservicio con los atributos.
@@ -24,23 +24,30 @@
 7. Se envia, de manera asíncrona, una notificación de la creacion de la Orden al microservicio de Mails.
 
 **Camino alternativo 1: El stock actual del articulo es mayor a lo especificado por los atributos umbral y altaDemanda.**
+
 2. No se genera ninguna orden de compra ni se modifica ninguna valor en el microservicio.
 
 **Camino alternativo 2: La bandera noReponer es True.**
+
 3. Significa que ese articulo no debe reponerse, por lo que no se genera ninguna orden de compra ni se modifica ninguna valor en el microservicio.
 
 **Camino alternativo 3: Se encentra una orden de compra que tiene asignado el valor "pendiente" en su atributo estado.**
+
 4. Significa que ya hay una orden de compra activa para este articulo, por lo que no se genera ninguna orden de compra ni se modifica ninguna valor en el microservicio.
 
 **Camino alternativo 4: El atributo ultimaOrden tiene el valor string "0".**
 Este es el valor con el que se crean las entidades de Atributo, significa que no se ha generado ninguna orden aun.
+
 4. Se crea una orden de compra de tantos articulos como figure en el atributo cantidadRestock.
+
 5. Se setea en atributo ultimaOrden del Articulo, el id de la orden creada.
+
 6. Se notifica asíncronamente al microservicio de Proveedores.
+
 7. Se envia, de manera asíncrona, una notificación de la creacion de la Orden al microservicio de Mails.
 
 
-#### CU: Restock Manual
+#### CU Restock Manual
 **Descripcion:** Un usuario crea una orden de compra manualmente.
 
 **Precondicion:** Debe existir un Articulo en la base de datos del microservicio con los atributos.
@@ -58,14 +65,14 @@ Este es el valor con el que se crean las entidades de Atributo, significa que no
 3. Se setea en atributo ultimaOrden del Articulo, el id de la orden creada.
 
 
-#### CU: ABM Articulo
+#### CU ABM Articulo
 **Descripcion:**
 * Alta: Se crea un articulo con el id provisto por el microservicio de Catalogo, y el atributo ultimaOrden con la cadena "0". Los demas atributos son provistos por el usuario durante la creacion.
 * Baja y modificacion: Se pueden modificar los atributos: umbral, cantidadRestock, altaDemanda, noReponer (se entiende que si este es True, para el microservicio de Restock, el articulo esta dado de baja).
 * Consulta: Se puede consultar el estado de todos los Articulos o el de un Articulo en especifico si se provee su id.
 
 
-#### CU: Cancelar Orden de Restock
+#### CU Cancelar Orden de Restock
 **Descripcion:** Se cancela una Orden de Restock.
 
 **Camino normal:**
@@ -74,13 +81,15 @@ Este es el valor con el que se crean las entidades de Atributo, significa que no
 3. Se notifica asincronamente al microservicio de Proveedores para la cancelación de la Orden de Restock.
 
 **Camino alternativo 1: El id ingresado no se corresponde con el de una Orden de Restock.**
+
 2. Se retorna un mensaje indicando que el id ingresado no corresponde a una Orden de Restock.
 
 **Camino alternativo 2: La Orden de Restock tiene un estado distinto de "pendiente".**
+
 2. Se retorna un mensaje indicando que el id ingresado no corresponde a una Orden de Restock.
 
 
-#### CU: Finalizar Orden de Restock
+#### CU Finalizar Orden de Restock
 **Descripcion:** Se indica que una Orden de Restock concluyo exitosamente.
 
 **Camino normal:**
@@ -88,9 +97,11 @@ Este es el valor con el que se crean las entidades de Atributo, significa que no
 2. Si la Orden de Restock existe y se encuentra con estado "pendiente", se le asigna el estado "finalizada".
 
 **Camino alternativo 1: El id ingresado no se corresponde con el de una Orden de Restock.**
+
 2. Se retorna un mensaje indicando que el id ingresado no corresponde a una Orden de Restock.
 
 **Camino alternativo 2: La Orden de Restock tiene un estado distinto de "pendiente".**
+
 2. Se retorna un mensaje indicando que el id ingresado no corresponde a una Orden de Restock.
 
 
