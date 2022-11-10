@@ -262,7 +262,7 @@ Response `201 Created`
 
 **Crear Articulo**
 
-`POST /articulo`
+`POST /crearArticulo`
 
 Body
 ```json
@@ -290,7 +290,7 @@ Response `201 Created`
 
 **Modificar Articulo**
 
-`PUT /articulo/{idArticulo}`
+`PUT /modificarArticulo/{idArticulo}`
 
 Body
 ```json
@@ -317,7 +317,7 @@ Response `200 OK`
 
 **Borrar Articulo**
 
-`DELETE /articulo/{idArticulo}`
+`DELETE /bajaArticulo/{idArticulo}`
 
 Response `200 OK`
 ```json
