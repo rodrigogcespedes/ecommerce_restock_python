@@ -1,11 +1,11 @@
-## Microservicio de Reposicion de stock
+## Microservicio de Reposicion de Stock
 
 ### Casos de uso
 
-![alt text](https://plantuml-rodrigogcespedes.cloud.okteto.net/png/imejJYsoKj3LjLFG038DDRciK4MCC4ICCKHCDBcKWbABI_AJinLy4_DA4tEK51ABOGOgEIVc9QVc91Of-1UbfEOfG5N2bG1jK7BBp4lCoQp2gGPefvAZaw-pWcDHIMPoQKu-NCO4R459Oav-EaJGCIKtCuyBJ48S27EPOsb9VcuYK7k-9W00)
+![alt text](https://www.plantuml.com/plantuml/png/TSwz2i8m40VmlKznPDAXWssd8gLHSEiY-0176YHuII2vB3wzeQqjY5r2kDzz_Fl863XPAjf7rA65ikpWaB-d8xGWpgOJlrBjIhqhpIRYhYDxzO81NK8IW74vM8WhEgK90omzArOPRyOXcVSVhRFAom0oi569_0hDj9EH_7Ckoj4QLqpldEqRHYRs5lEutvBsset9qWS0)
 
 #### CU Restock Automatico
-**Descripcion:** Cuando el stock de un articulo disminuye, se genera una Orden de Compra automáticamente si es necesario.
+**Descripcion:** Cuando el stock de un articulo disminuye, se genera una Orden de Restock automáticamente si es necesario.
 
 **Precondicion:** Debe existir un Articulo en la base de datos del microservicio con los atributos.
 * id: string
@@ -20,37 +20,34 @@
 1. Cuando cambia el stock de un articulo, se controla si el nuevo stock esta por debajo del valor del umbral (si altaDemanda es False) o por debajo del doble del valor del umbral (si altaDemanda es True).
 2. Si ese es el caso, se revisa que la bandera noReponer sea False.
 3. Se controla que la orden referenciada por el atributo ultimaOrden tenga un valor distinto a "pendiente" en su atributo estado.
-4. Se crea una orden de compra de tantos articulos como figure en el atributo cantidadRestock.
+4. Se crea una Orden de Restock de tantos articulos como figure en el atributo cantidadRestock.
 5. Se setea en atributo ultimaOrden del Articulo, el id de la orden creada.
-6. Se notifica asíncronamente al microservicio de Proveedores.
-7. Se envia, de manera asíncrona, una notificación de la creacion de la Orden al microservicio de Mails.
+6. Se publica un mensaje con el id de la orden de restock, el id del articulo y la cantidad del mismo para que sea leido por el microservicio Proveedores para gestionar la compra y el microservicio de Mailing para que se notifique a los administradores de la Orden de Restock creada.
 
 **Camino alternativo 1: El stock actual del articulo es mayor a lo especificado por los atributos umbral y altaDemanda.**
 
-2. No se genera ninguna orden de compra ni se modifica ninguna valor en el microservicio.
+2. No se genera ninguna Orden de Restock ni se modifica ninguna valor en el microservicio.
 
 **Camino alternativo 2: La bandera noReponer es True.**
 
-3. Significa que ese articulo no debe reponerse, por lo que no se genera ninguna orden de compra ni se modifica ninguna valor en el microservicio.
+3. Significa que ese articulo no debe reponerse, por lo que no se genera ninguna Orden de Restock ni se modifica ninguna valor en el microservicio.
 
-**Camino alternativo 3: Se encentra una orden de compra que tiene asignado el valor "pendiente" en su atributo estado.**
+**Camino alternativo 3: Se encentra una Orden de Restock que tiene asignado el valor "pendiente" en su atributo estado.**
 
-4. Significa que ya hay una orden de compra activa para este articulo, por lo que no se genera ninguna orden de compra ni se modifica ninguna valor en el microservicio.
+4. Significa que ya hay una Orden de Restock activa para este articulo, por lo que no se genera ninguna Orden de Restock ni se modifica ninguna valor en el microservicio.
 
 **Camino alternativo 4: El atributo ultimaOrden tiene el valor string "0".**
 Este es el valor con el que se crean las entidades de Atributo, significa que no se ha generado ninguna orden aun.
 
-4. Se crea una orden de compra de tantos articulos como figure en el atributo cantidadRestock.
+4. Se crea una Orden de Restock de tantos articulos como figure en el atributo cantidadRestock.
 
 5. Se setea en atributo ultimaOrden del Articulo, el id de la orden creada.
 
-6. Se notifica asíncronamente al microservicio de Proveedores.
-
-7. Se envia, de manera asíncrona, una notificación de la creacion de la Orden al microservicio de Mails.
+6. Se publica en un mensaje con el id de la orden de restock, el id del articulo y la cantidad del mismo para que sea leido por el microservicio Proveedores para gestionar la compra y el microservicio de Mailing para que se notifique a los administradores de la Orden de Restock creada.
 
 
 #### CU Restock Manual
-**Descripcion:** Un usuario crea una orden de compra manualmente.
+**Descripcion:** Un usuario crea una Orden de Restock manualmente.
 
 **Precondicion:** Debe existir un Articulo en la base de datos del microservicio con los atributos.
 * id: string
@@ -63,8 +60,9 @@ Este es el valor con el que se crean las entidades de Atributo, significa que no
 
 **Camino normal:**
 1. Se envía una solicitud con el id del articulo y la cantidad a reponer.
-2. Se crea una nueva Orden de compra con estado "pendiente" de tantos articulos como haya elegido el usuario.
+2. Se crea una nueva Orden de Restock con estado "pendiente" de tantos articulos como haya elegido el usuario.
 3. Se setea en atributo ultimaOrden del Articulo, el id de la orden creada.
+4. Se publica en un mensaje con el id de la orden de restock, el id del articulo y la cantidad del mismo para que sea leido por el microservicio Proveedores para gestionar la compra y el microservicio de Mailing para que se notifique a los administradores de la Orden de Restock creada.
 
 
 #### CU ABM Articulo
@@ -80,7 +78,7 @@ Este es el valor con el que se crean las entidades de Atributo, significa que no
 **Camino normal:**
 1. Se ingresa el id de la Orden de Restock.
 2. Si la Orden de Restock existe y se encuentra con estado "pendiente", se le asigna el estado "cancelada".
-3. Se notifica asincronamente al microservicio de Proveedores para la cancelación de la Orden de Restock.
+3. Se publica un mensaje con el id de la orden de restock, el id del articulo y la cantidad del mismo.
 
 **Camino alternativo 1: El id ingresado no se corresponde con el de una Orden de Restock.**
 
@@ -97,6 +95,7 @@ Este es el valor con el que se crean las entidades de Atributo, significa que no
 **Camino normal:**
 1. Se ingresa el id de la Orden de Restock.
 2. Si la Orden de Restock existe y se encuentra con estado "pendiente", se le asigna el estado "finalizada".
+3. Se publica un mensaje con el id de la orden de restock, el id del articulo y la cantidad del mismo.
 
 **Camino alternativo 1: El id ingresado no se corresponde con el de una Orden de Restock.**
 
@@ -139,7 +138,7 @@ Este es el valor con el que se crean las entidades de Atributo, significa que no
 
 **Cancelar Orden de Restock**
 
-`PUT /cancelarOrden/{idOrdenRestock}`
+`PUT /{idOrdenRestock}/cancelarOrden`
 
 Body
 ```json
@@ -160,7 +159,7 @@ Response `200 OK`
 
 **Finalizar Orden de Restock**
 
-`PUT /finalizarOrden/{idOrdenRestock}`
+`PUT /{idOrdenRestock}/finalizarOrden`
 
 Body
 ```json
@@ -180,7 +179,7 @@ Response `200 OK`
 
 **Consultar Orden de Restock**
 
-`GET /ordenRestock/{idOrdenRestock}`
+`GET /{idOrdenRestock}/ordenRestock`
 
 Response `200 OK`
 ```json
@@ -196,7 +195,7 @@ Response `200 OK`
 
 **Consultar Ordenes de Restock pedientes**
 
-`GET /ordenRestock/pendientes/`
+`GET /ordenesPendientes`
 
 Response `200 OK`
 ```json
@@ -215,7 +214,7 @@ Response `200 OK`
 
 **Consultar Ordenes de Restock de un Articulo**
 
-`GET /ordenRestockPorArticulo/{idArticulo}`
+`GET /{idArticulo}/ordenesPorArticulo`
 
 Response `200 OK`
 ```json
@@ -292,7 +291,7 @@ Response `201 Created`
 
 **Modificar Articulo**
 
-`PUT /modificarArticulo/{idArticulo}`
+`PUT /{idArticulo}/modificarArticulo`
 
 Body
 ```json
@@ -319,7 +318,7 @@ Response `200 OK`
 
 **Borrar Articulo**
 
-`DELETE /bajaArticulo/{idArticulo}`
+`DELETE /{idArticulo}/borrarArticulo`
 
 Response `200 OK`
 ```json
@@ -335,7 +334,11 @@ Response `200 OK`
 ```
 
 
-### Interfaz asincronica (rabbit)
+### Interfaz asincronica (RabbitMQ)
+
+Se crea el exchange `Restock` de tipo `topic` para que sea consultado por los microservicios que necesiten saber sobre las Ordenes de Restock.
+
+> Los topicos previstos son "order.created", "order.canceled" y "order.finished".
 
 **Control de Restock Automatico**
 
@@ -352,7 +355,35 @@ Body
 
 **Creacion de Orden de Restock**
 
-Envia al microservicio Proveedores el el articulo y la cantidad a comprar del mismo, junto con el ide de la Orden de Restock.
+Publica en el exchange `Restock` con `routing_key = "order.created"`
+
+Body
+```json
+{
+    "idOrdenRestock": "string",
+    "idArticulo" : "string",
+    "cantidad" : "int"
+}
+```
+
+
+**Cancelacion de Orden de Restock**
+
+Publica en el exchange `Restock` con `routing_key = "order.canceled"`
+
+Body
+```json
+{
+    "idOrdenRestock": "string",
+    "idArticulo" : "string",
+    "cantidad" : "int"
+}
+```
+
+
+**Finalizacion de Orden de Restock**
+
+Publica en el exchange `Restock` con `routing_key = "order.finished"`
 
 Body
 ```json
