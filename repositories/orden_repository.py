@@ -1,7 +1,7 @@
 import json
 import pymongo
 from bson import json_util
-from repositories.articulo_repository import buscar_un_articulo
+from repositories.articulo_repository import buscar_uno
 import uuid
 import datetime
 
@@ -24,30 +24,21 @@ def parse_json(data: dict):
     return json.loads(json_util.dumps(data))
 
 
-def buscar_una_orden(id: str):
+def buscar_uno(id: str):
     orden = collec_orden.find_one({
         'id': id
     })
     return parse_json(orden)
 
 
-def buscar_ordenes_pendintes():
-    orden = collec_orden.find({
-        'estado': CREATED
-    })
+def buscar_muchos(condiciones: dict):
+    orden = collec_orden.find(
+        parse_json(condiciones)
+    )
     return parse_json(orden)
 
 
-def buscar_ordenes_por_articulo(id: str):
-    articulo = buscar_un_articulo(id)
-    orden = collec_orden.find({
-        'idArticulo': id
-    })
-    articulo['ordenes'] = orden
-    return parse_json(articulo)
-
-
-def crear_orden(orden_vacia: dict):
+def crear(orden_vacia: dict):
     orden_nueva = {
         'id': str(uuid.uuid1()),
         'fechaEmision': datetime.datetime.now().strftime('%d-%m-%Y_%H:%M:%S'),
@@ -59,25 +50,57 @@ def crear_orden(orden_vacia: dict):
     return orden_nueva
 
 
-def cancelar_orden(id: str):
+def modificar(id: str, modificaciones: dict):
     collec_orden.update_one({
         'id': id
     },
         {
-        '$set': {
-            'estado': CANCELED
-        }
+        '$set': parse_json(modificaciones)
     })
-    return buscar_una_orden(id)
+    print(modificaciones)
+    print(buscar_uno(id))
+    return buscar_uno(id)
 
 
-def finalizar_orden(id: str):
-    collec_orden.update_one({
-        'id': id
-    },
-        {
-        '$set': {
-            'estado': ENDED
-        }
-    })
-    return buscar_una_orden(id)
+# def buscar_ordenes(condiciones: dict):
+#     orden = collec_orden.find(condiciones)
+#     return parse_json(condiciones)
+
+# def buscar_ordenes_pendintes():
+#     orden = collec_orden.find({
+#         'estado': CREATED
+#     })
+#     return parse_json(orden)
+
+
+# def buscar_ordenes_por_articulo(id: str):
+#     articulo = buscar_uno(id)
+#     orden = collec_orden.find({
+#         'idArticulo': id
+#     })
+#     articulo['ordenes'] = orden
+#     return parse_json(articulo)
+
+
+# def cancelar_orden(id: str):
+#     collec_orden.update_one({
+#         'id': id
+#     },
+#         {
+#         '$set': {
+#             'estado': CANCELED
+#         }
+#     })
+#     return buscar_una_orden(id)
+#
+#
+# def finalizar_orden(id: str):
+#     collec_orden.update_one({
+#         'id': id
+#     },
+#         {
+#         '$set': {
+#             'estado': ENDED
+#         }
+#     })
+#     return buscar_una_orden(id)

@@ -2,20 +2,19 @@ import pika
 from pika.exchange_type import ExchangeType
 from services.orden_service import crear_orden_automatica
 
+
+def on_message_received(ch, method, properties, body):
+    print(f"Received new message: {body}")
+
+
 connection_parameters = pika.ConnectionParameters('localhost')
 
 connection = pika.BlockingConnection(connection_parameters)
 
 channel = connection.channel()
 
-
-# ---------------------EXCHANGES---------------------
-channel.exchange_declare(exchange='Restock', exchange_type=ExchangeType.topic)
-
 channel.exchange_declare(exchange='Catalogo', exchange_type=ExchangeType.topic)
 
-
-# -----------------------COLAS-----------------------
 queue = channel.queue_declare(queue='', exclusive=True)
 
 queue_name = queue.method.queue

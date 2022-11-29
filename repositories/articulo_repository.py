@@ -17,14 +17,14 @@ def parse_json(data: dict):
     return json.loads(json_util.dumps(data))
 
 
-def buscar_un_articulo(id: str):
+def buscar_uno(id: str):
     articulo = collec_articulo.find_one({
         'id': id
     })
     return parse_json(articulo)
 
 
-def crear_articulo(articulo_vacio : dict):
+def crear(articulo_vacio : dict):
     articulo_nuevo = {
         'id': str(uuid.uuid1()),
         'idArticulo': articulo_vacio['idArticulo'],
@@ -38,17 +38,17 @@ def crear_articulo(articulo_vacio : dict):
     return articulo_nuevo
 
 
-def modificar_articulo(id: str, articulo_modificado : dict):
+def modificar(id: str, articulo_modificado: dict):
     collec_articulo.update_one({
         'id': id
     },
         {
         '$set': parse_json(articulo_modificado)
     })
-    return buscar_un_articulo(id)
+    return buscar_uno(id)
 
 
-def borrar_articulo(id:str):
+def borrar(id: str):
     collec_articulo.update_one({
         'id': id
     },

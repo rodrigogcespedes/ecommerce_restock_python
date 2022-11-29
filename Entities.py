@@ -26,3 +26,8 @@ class ArticuloVacio(BaseModel):
     cantidadRestock: int
     altaDemanda: bool
     noReponer: bool
+
+
+class dtoArticuloCatalogo(BaseModel):
+    idArticulo: str
+    cantidad: int
