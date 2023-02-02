@@ -10,7 +10,7 @@ WORKDIR ${SRC_DIR}
 
 ENV PYTHONUNBUFFERED=1
 
-EXPOSE 9500
+EXPOSE 9600
 
 RUN pip install --no-cache-dir -r requirements.txt
 

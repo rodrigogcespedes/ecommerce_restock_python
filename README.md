@@ -4,7 +4,6 @@ Para correr el servicio:
 
 * Puede clonar el proyecto y ejecutar desde el directorio principal ```pip install --no-cache-dir -r requirements.txt``` y luego ```python -m uvicorn server:app --port 9600 --reload```
 * Tambien se puede correr con una imagen de docker, construyala clonando el proyecto y ejecutado la instruccion ```docker image build -t restock_service .``` y luego ```docker run -it -p 9600:9600 restock_service```
-* Tambien se puede descargar la imagen ya construida desde DockerHub con la instruccion ```docker run -it -p 9600:9600 rodrigogcespedes/restock_service:0.1```
 
 ### Casos de uso
 
